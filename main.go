@@ -69,7 +69,7 @@ func showAllTask(mmd bool) {
 			}
 		}
 
-		fmt.Printf("\n%d. %s - %s - %s \n", task1.ID, task1.Name, maybyitsdone)
+		fmt.Printf("\n%d. %s - %s \n", task1.ID, task1.Name, maybyitsdone)
 
 	}
 
