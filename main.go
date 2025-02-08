@@ -20,7 +20,7 @@ var Pathname string = "database1.json"
 
 // getting data from db
 func gettingAllTasks() {
-	newdata, err := os.ReadFile()
+	newdata, err := os.ReadFile(Pathname)
 	if err != nil {
 		panic(err)
 	}
