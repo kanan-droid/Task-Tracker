@@ -67,7 +67,7 @@ func showAllTask(onlyuncompe bool, onlyInprogress bool) {
 		maybyitsdone := "pending"
 		if onlyInprogress {
 			//this if make sure if task has not been started dont show it or if task is finished dont show it show only the one that are in progerssion
-			if !task1.Started || task1.IsDone {
+			if task1.IsDone {
 				continue
 			}
 		}
@@ -86,11 +86,14 @@ func showAllTask(onlyuncompe bool, onlyInprogress bool) {
 		}
 		//time management
 		Timebeforcreation := time.Since(task1.AdedDate)
-		var ageago string
+		var ageago string = ""
 		if Timebeforcreation > 24 {
-			ageago = fmt.Sprintf("sinc %f hours ago", Timebeforcreation.Hours())
+			ageago = fmt.Sprintf("added %f hours ago", Timebeforcreation.Hours()/24)
+		}
+		if Timebeforcreation > 1 {
+			ageago = fmt.Sprintf("added %f minutes ago", Timebeforcreation.Minutes())
 		} else {
-			ageago = fmt.Sprintf("sinc %f days ago", Timebeforcreation.Hours()/24)
+			ageago = fmt.Sprintf("added %f days ago", Timebeforcreation.Hours())
 		}
 
 		fmt.Printf("\n%d.%s - %s \ndescerption:%s -Started:%s \n", task1.ID, task1.Name, maybyitsdone, task1.Description, ageago)
@@ -144,15 +147,22 @@ func MarkingTaskDone(Id string, markingitdone bool, startingIt bool) {
 	}
 	var updatTasks []Task
 
-	for i := range Taskslist {
-		if Taskslist[i].ID == taskID {
-			if startingIt {
-				Taskslist[i].Started = true
+	if markingitdone {
+		for _, Taski1 := range Taskslist {
+			if Taski1.ID == taskID {
+				Taski1.IsDone = true
+				Taski1.Started = false
+				updatTasks = append(updatTasks, Taski1)
 			}
-			if markingitdone {
-				Taskslist[i].IsDone = true
+		}
+	}
+	if startingIt {
+		for _, Taski2 := range Taskslist {
+			if Taski2.ID == taskID {
+				Taski2.Started = true
+				Taski2.IsDone = false
+				updatTasks = append(updatTasks, Taski2)
 			}
-			break
 		}
 	}
 
@@ -200,25 +210,35 @@ func main() {
 			}
 			showAllTask(uncomp, false)
 
-		// Update Task
+			// Update Task
 		case 3:
 			userinput1 := bufio.NewReader(os.Stdin)
-			fmt.Print("\n1.start a task \n2.mark task done\n")
+			fmt.Print("\n1. Start a task\n2. Mark a task done\n")
 			text, _ := userinput1.ReadString('\n')
+			text = strings.TrimSpace(text)
 
+			// Check if the user wants to start a task or mark it done
 			if text == "1" {
+				fmt.Print("\nWhich task would you like to start?\n")
 				showAllTask(true, false)
-				fmt.Print("\nwhich task would you like to Start?\n")
-			}
-			if text == "2" {
+			} else if text == "2" {
+				fmt.Print("\nWhich task would you like to mark as done?\n")
 				showAllTask(false, true)
-				fmt.Print("\nwhich task would you like to Mark Done?\n")
+			} else {
+				fmt.Println("Invalid option. Please select a valid option.")
+				continue
 			}
+
+			// Capture the task ID input from the user
 			userinput4 := bufio.NewReader(os.Stdin)
 			text423, _ := userinput4.ReadString('\n')
+			text423 = strings.TrimSpace(text423)
+
 			if text == "1" {
+				// Start the task
 				MarkingTaskDone(text423, false, true)
-			} else {
+			} else if text == "2" {
+				// Mark the task as done
 				MarkingTaskDone(text423, true, false)
 			}
 
